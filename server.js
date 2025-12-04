@@ -46,7 +46,6 @@ app.post("/chat", async (req, res) => {
     const { message } = req.body;
     if (!message) return res.status(400).json({ error: "Message is required" });
 
-    // Google Gemini API call
     const response = await fetch("https://gemini.api.google.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -64,8 +63,8 @@ app.post("/chat", async (req, res) => {
     });
 
     const data = await response.json();
+    console.log("Gemini API response:", data); // 🔹 log full response
 
-    // Gemini response check
     let reply = "Sorry, I didn't understand.";
     if (data?.choices?.length > 0 && data.choices[0].message?.content) {
       reply = data.choices[0].message.content;
@@ -73,13 +72,7 @@ app.post("/chat", async (req, res) => {
 
     res.json({ reply });
   } catch (err) {
-    console.error("Error:", err);
+    console.error("Error in /chat:", err);
     res.status(500).json({ error: "Something went wrong" });
   }
 });
-
-// -------------------
-// Start Server
-// -------------------
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Atlas backend running on port ${PORT}`));
